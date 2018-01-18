@@ -6,7 +6,6 @@ Esse projeto se encontra, atualmente, em
 
 https://github.com/llucasll/tests/tree/master/lib/geradores%20de%20codigo/debug.php/
 
-
 ## Instalação
 
 Será necessária a instalação do interpretador PHP.
@@ -78,4 +77,10 @@ Pensando em simplificar ao máximo para o programador-usuário da biblioteca, o 
 O include em PHP e em C se comportam de maneiras distintas, então talvez seja confuso entender essa parte: ao dar include de `debug.php`, o arquivo `exemplo.c.php` está incluindo em sua saída tudo o que for saída de `debug.php`. Ou seja, o include de `debug.h` (presente na primeira linha de `debug.php`) fará parte do arquivo gerado (`debug.c`).
 
 Esse detalhe não é imprenscindível para a compreensão da biblioteca.
+
+## Considerações finais
+
+Estou cansado de escrever esse arquivo (shashhhsaha). Escrevi direto, de uma vez.
+
+Esse projeto é apenas um exemplo de uso do PHP como gerador de código C, e essa documentação é um esboço.
 

@@ -4,7 +4,7 @@ Essa biblioteca é, como se pode ver, apenas um pequeno experimento, para explor
 
 Esse projeto se encontra, atualmente, em
 
-https://github.com/llucasll/tests/tree/master/lib/geradores%20de%20codigo/debug.php/
+https://github.com/llucasll/tests/tree/master/geradores%20de%20codigo/debug.php/
 
 ## Instalação
 
@@ -32,17 +32,7 @@ O primeiro passo para entender a lógica por trás do projeto é ler o makefile.
 
 #### Organização
 
-Na última versão/commit eu separei aquilo que tinha caráter de biblioteca em `lib/`.
-
-(Para ver a versão anterior simplesmente use
-	
-	$ git checkout master~
-
-Para retornar à versão mais atual, use
-	
-	$ git checkout master
-	
-)
+Eu separei aquilo que tinha caráter de biblioteca em `lib/`.
 
 Restou então, na pasta principal, os arquivos
 * `README.md` - este aqui
