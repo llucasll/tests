@@ -26,23 +26,23 @@ Para fazer o download desse repositório, aqui já vai o atalho:
 Se você usa o SO em português, provavelmente o comando certo seria
 
 	$ git clone https://github.com/llucasll/tests.git ~/Área\ de\ trabalho/github/tests;
-	cd ~/desktop/github/tests/geradores\ de\ codigo/debug.php
+	cd ~/Área\ de\ trabalho/github/tests/geradores\ de\ codigo/debug.php
 	
 ## Motivação (ou, "Desculpa para testar os limites do PHP")
 
 Convém entender, primeiramente, o que essa biblioteca faz.
 
-Quando estamos programando, é comum printar certos valores de variáveis com a intenção de debugar o código. Entretanto, esses prints não podem permanecer no arquivo final gerado (entregue ao usuário final, ou avaliador, se for um projeto acadêmico).
+Quando estamos programando, é comum printar certos valores de variáveis com a intenção de depurar o código. Entretanto, esses prints não podem permanecer no arquivo final gerado (entregue ao usuário final, ou avaliador, se for um projeto acadêmico).
 
-Com a intenção de minimizar os problemas trazidos pelo debug, sem atrapalhar a produtividade do programador, diferentes framewoks provêm mecanismos de depuração que são transparentes para o usuário final (desde utilizar uma variável global que determine se é para printar os debugs ou não, até simplesmente salvar em um `arquivo.log`). Acredito que a melhor (ou única) maneira seria a existência de uma função `debug()` que recebesse valores analogamente ao printf, mas o substituindo para abstrair a implementação: a função debug pode chamar o printf, salvar num arquivo de log ou simplesmente não fazer nada; bastando alterar o seu comportamento em um único lugar (a conhecida vantagem do uso de funções).
+Com a intenção de minimizar os problemas trazidos pelo debug, sem atrapalhar a produtividade do programador, diferentes framewoks provêm mecanismos de depuração que são transparentes para o usuário final (desde utilizar uma variável global que determine se é para printar os debugs ou não, até simplesmente salvar em um `arquivo.log`). Acredito que a melhor (ou única) maneira de sanar esse problema (parecido com o que outros frameworks fazem) é a implementação de uma função `debug()` que recebesse valores analogamente ao printf, mas substituindo-o para abstrair a implementação: a função debug pode chamar o printf, salvar num arquivo de log ou simplesmente não fazer nada; bastando alterar o seu comportamento em um único lugar (uma conhecida vantagem do uso de funções).
 
-Em alguns casos, porém, como em projetos Open Source, pode ser conveniente tirar esses debugs mesmo no código-fonte (versão compartilhada publicamente). Para tal, um gerador de código em PHP seria muito conveniente para decidir, numa etapa anterior à compilação, se os debugs vão ou não para o código-fonte.
+Em alguns casos, porém, como em projetos Open Source, pode ser conveniente tirar esses debugs mesmo no código-fonte (versão compartilhada publicamente). Mais do que simplesmente "obter privacidade" sobre os testes feitos, isso (obviamente) torna o código mais legível (algo bastante desejável em projetos Open Source). Para tal, um gerador de código em PHP seria muito conveniente para decidir, numa etapa anterior à compilação, se os debugs vão ou não para o código-fonte.
 
-A ideia é que o programador use um código misto, escrevendo seu programa naturalmente em C e inserindo pequenos scripts em PHP quando desejar fazer uso do debug. Assim, ele não precisa remover manualmente cada chamada a `debug()` antes de publicar o código-fonte: o PHP já faz isso por ele. Em tempo de pré-compilação (no momento de gerar o código-fonte), o PHP decide sobre simplesmente ignorar esses scripts (assim eles não saem no fonte) ou "substituí-los" por chamadas à função debug(), em C.
+A ideia é que o programador use um código misto, escrevendo seu programa naturalmente em C e inserindo pequenos scripts em PHP quando desejar fazer uso do debug. Assim, ele não precisa remover manualmente cada chamada a `debug()` antes de publicar o código-fonte: o PHP já faz isso por ele. Em tempo de pré-compilação (no momento de gerar o código-fonte), o PHP decide sobre simplesmente ignorar esses scripts (assim eles não saem no fonte) ou "substituí-los" por chamadas à função `debug()`, em C.
 
 ## Explorando
 
-O primeiro passo para entender a lógica por trás do projeto é ler o makefile. Para quem já está minimamente habituado com o uso de makefiles para compilação em C, e com o terminal no Linux, ele basicamente resume a mecânica da geração de código automática, e a forma como os arquivos contidos aqui se organizam.
+O primeiro passo para entender a lógica por trás do projeto é ler o [makefile](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/makefile). Para quem já está minimamente habituado com o uso de makefiles para compilação em C, e com o terminal no Linux, ele basicamente resume a mecânica da geração de código automática, e a forma como os arquivos contidos aqui se organizam.
 
 #### Organização
 
@@ -51,7 +51,7 @@ Eu separei aquilo que tinha caráter de biblioteca em `lib/`.
 Restou então, na pasta principal, os arquivos
 * `README.md` - este aqui
 * `makefile` - quem coordena pré-compilação, compilação e execução, de forma automatizada
-* `exemplo.c.php` - que gera/cuja saída vai para o arquivo `exemplo.c`
+* [`exemplo.c.php`](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/exemplo.c.php) - que gera/cuja saída vai para o arquivo [`exemplo.c`](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/exemplo.c)
 * `exemplo.c` - deixei apenas por razões didáticas (futuramente, o ideal é o comando make, sem argumentos, não deixar arquivos intermediários, como esse)
 
 Estes arquivos estão aqui apenas para exemplificar [como usar]/testar a biblioteca
@@ -59,13 +59,13 @@ Estes arquivos estão aqui apenas para exemplificar [como usar]/testar a bibliot
 #### `Lib/`
 
 Aqui dentro encontramos 3 arquivos que fazem toda a mágica:
-* `debug.h` - um cabeçalho como outro qualquer 
+* [`debug.h`](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/lib/debug.h) - um cabeçalho como outro qualquer 
 * `debug.c` - responsável unicamente por prover a implementação da função `debug()`, em C
 * `debug.php` - onde a mágica, de fato, acontece .-. (implementa `debug()` em PHP)
 
 ## Funcionamento
 
-Primeiramente, é importante entender que há uma função `debug()` implementada em C (em `lib/debug.c`) e outra em PHP (em `lib/debug.php`).
+Primeiramente, é importante entender que há uma função `debug()` implementada em C (em [`lib/debug.c`](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/lib/debug.c)) e outra em PHP (em [`lib/debug.php`](https://github.com/llucasll/tests/blob/master/geradores%20de%20codigo/debug.php/lib/debug.php#L36)).
 Essas funções não só estão em linguagens distintas, como têm funções distintas:
 * A função `debug()` em C é responsável por implementar o que fazer com as strings de debug fornecidas em tempo de execução
 * A função `debug()` em PHP é responsável por determinar o que fazer quando o programador solicita o uso de depuração - controlada pela var `$DEBUG`:
@@ -81,6 +81,10 @@ Pensando em simplificar ao máximo para o programador-usuário da biblioteca, o 
 O include em PHP e em C se comportam de maneiras distintas, então talvez seja confuso entender essa parte: ao dar include de `lib/debug.php`, o arquivo `exemplo.c.php` está incluindo em sua saída tudo o que for saída de `lib/debug.php`. Ou seja, o include de `lib/debug.h` (presente na primeira linha de `lib/debug.php`) fará parte do arquivo gerado (`exemplo.c`).
 
 Esse detalhe não é imprenscindível para a compreensão da biblioteca.
+
+## TODO
+
+Essa documentação (infelizmente) ainda não explica quais são os testes que o programa-exemplo faz (pq na verdade ele foi criado apenas para testar a biblioteca/exemplificar seu uso).
 
 ## Considerações finais
 
